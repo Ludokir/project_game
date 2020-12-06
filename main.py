@@ -203,4 +203,4 @@ while True:
     win()
     pygame.display.update()
     clock.tick(FPS)
-    pygame.display.set_caption(f'Cringe Арканоид{int(clock.get_fps())}')
+    
