@@ -1,9 +1,9 @@
 import pygame
 import sys
 from random import randrange, randint
-from os import environ, path
+import os
 
-environ['SDL_VIDEO_CENTERED'] = '1'
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 pygame.init()
 
@@ -24,15 +24,15 @@ BLACK = (0, 0, 0)
 rect_size = w, h = 222, 70
 rect_pos = ((W_S - w) // 2, ((H_S + h) // 2))
 
-BG = pygame.image.load(path.join('img/bg.jpg'))
+BG = pygame.image.load(os.path.join('bg.jpg'))
 bgs = BG.get_rect()
 
-ball = pygame.image.load(path.join('img/ball.png'))
+ball = pygame.image.load(os.path.join('ball.png'))
 ball_rect = ball.get_rect(center=((W_S // 2), (H_S - 81)))
 ball_rect = ball_rect_start = ball.get_rect(
     center=((W_S // 2), (H_S - 51 - (ball_rect.h // 2))))
 
-platform = pygame.image.load(path.join('img/platform1.png'))
+platform = pygame.image.load(os.path.join('platform1.png'))
 platform_rect = platform.get_rect(center=((W_S // 2), (H_S - 80)))
 platform_rect.top = H_S - 50
 
