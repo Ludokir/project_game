@@ -1,6 +1,9 @@
 import pygame
 import sys
 from random import randrange, randint
+from os import environ
+
+environ['SDL_VIDEO_CENTERED'] = '1'
 
 pygame.init()
 
@@ -86,6 +89,7 @@ def init():
 def move_and_stop():
     global ball_rect, i, speed_x, speed_y, BLACK
     global speed_y_start, block, platform_rect, lives
+    button = Button(220, 70)
     print_text(f'Lives: {(lives)}', (W_S - 70), (H_S - 65), 30)
     if i <= block:
         ball_rect = ball_rect
@@ -108,6 +112,7 @@ def move_and_stop():
         i = 0
         print_text('GAME OVER!', (W_S // 2), (H_S // 2), 50)
         button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Play again', again)
+        pygame.mouse.set_visible(True)
 
 
 # основные установки
@@ -162,14 +167,13 @@ clock = pygame.time.Clock()
 # установка кирпичей
 brick = pygame.image.load('img/brick0.png')
 block_list = [pygame.Rect(
-    10 + 120 * i, 10 + 70 * j, 100, 50) for i in range(1) for j in range(1)]
+    10 + 120 * i, 10 + 70 * j, 100, 50) for i in range(10) for j in range(4)]
 color_list = [(randrange(30, 256), randrange(
-    30, 256), randrange(30, 256)) for i in range(1) for j in range(1)]
+    30, 256), randrange(30, 256)) for i in range(10) for j in range(4)]
 
 while True:
     i += 1  # задержка
     run()
-    button = Button(220, 60)
     screen.blit(BG, bgs)
     # вывод кирпичей
     bricks = [pygame.draw.rect(screen, color_list[
@@ -182,5 +186,4 @@ while True:
     win()
     pygame.display.update()
     clock.tick(FPS)
-    pygame.display.set_caption(f'Ball   FPS: {int(clock.get_fps())}')
-    print(i)
+    pygame.display.set_caption(f'Cringe Арканоид{int(clock.get_fps())}')
