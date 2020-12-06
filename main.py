@@ -9,11 +9,15 @@ W_S, H_S = 1200, 800
 lives = 3
 num = 0
 i = 0
-speed_x = randint(5, 7)
+speed_x = randint(6, 8)
 speed_y = speed_y_start = randint(-8, -6)
 block = 100
 
-rect_size = w, h = 222, 60
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+BLACK = (0, 0, 0)
+
+rect_size = w, h = 222, 70
 rect_pos = ((W_S - w) // 2, ((H_S + h) // 2))
 
 BG = pygame.image.load('img/bg.jpg')
@@ -29,6 +33,45 @@ platform_rect = platform.get_rect(center=((W_S // 2), (H_S - 80)))
 platform_rect.top = H_S - 50
 
 
+def print_text(message, x, y, size):
+    font = pygame.font.SysFont('Arial', size, True, False)
+    text = font.render(message, True, (0, 0, 0))
+    text_rect = text.get_rect(center=(x, y))
+    screen.blit(text, text_rect)
+
+
+def again():
+    return
+
+
+class Button():
+    def __init__(self, w, h):
+        self.w = w
+        self.h = h
+        self.inactive_color = WHITE
+        self.active_color = BLUE
+
+    def blit(self, x, y, text, action=None):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+
+        if x < mouse[0] < x + self.w and y < mouse[1] < y + self.h:
+            self.rect = pygame.draw.rect(
+                screen, self.active_color, (x, y, self.w, self.h))
+
+            if click[0] == 1 and action is not None:
+                action()
+
+        else:
+            pygame.draw.rect(
+                screen, self.inactive_color, (x, y, self.w, self.h))
+
+        font = pygame.font.SysFont('Arial', 50, True, False)
+        text = font.render(text, True, (0, 0, 0))
+        text_rect = text.get_rect(topleft=(x + 10, y + 6))
+        screen.blit(text, text_rect)
+
+
 # начальные установки для платформы и шара
 def init():
     global i, ball_rect, platform_rect
@@ -41,15 +84,9 @@ def init():
 
 
 def move_and_stop():
-    global ball_rect, i, speed_x, speed_y
+    global ball_rect, i, speed_x, speed_y, BLACK
     global speed_y_start, block, platform_rect, lives
-    font2 = pygame.font.SysFont('Arial', 30, True, False)
-    text2 = font2.render(f'Lives: {(lives)}', True, (176, 42, 43))
-    text_rect2 = text2.get_rect(center=((W_S - 70), (H_S - 65)))
-
-    font3 = pygame.font.SysFont('Arial', 50, True, False)
-    text3 = font3.render('GAME OVER!', True, (176, 42, 43))
-    text_rect3 = text3.get_rect(center=((W_S // 2), (H_S // 2)))
+    print_text(f'Lives: {(lives)}', (W_S - 70), (H_S - 65), 30)
     if i <= block:
         ball_rect = ball_rect
     else:
@@ -69,8 +106,8 @@ def move_and_stop():
         lives -= 1
     if lives <= 0:
         i = 0
-        screen.blit(text3, text_rect3)
-    screen.blit(text2, text_rect2)
+        print_text('GAME OVER!', (W_S // 2), (H_S // 2), 50)
+        button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Play again', again)
 
 
 # основные установки
@@ -91,35 +128,27 @@ def run():
 
 # столкновение шара и кирпичей
 def collide():
-    global speed_y, ball_rect, num
+    global speed_y, ball_rect, num, rect1, BLUE, WHITE, BLACK
+    collide1 = False
     hit_index = ball_rect.collidelist(block_list)
-    font1 = pygame.font.SysFont('Arial', 30, True, False)
-    text1 = font1.render(f'Points: {(num)}', True, (176, 42, 43))
-    text_rect1 = text1.get_rect(center=((W_S - 70), (H_S - 100)))
-    font4 = pygame.font.SysFont('Arial', 50, True, False)
-    text4 = font4.render('Play again', True, (176, 42, 43))
-    text_rect4 = text4.get_rect(topleft=((W_S - w) // 2 + 10, ((H_S + h) // 2)))
+    print_text(f'Points: {(num)}', (W_S - 70), (H_S - 100), 30)
     if hit_index != -1:
         hit_rect = block_list.pop(hit_index)
         hit_color = color_list.pop(hit_index)
         speed_y = -speed_y
         num += 1
-    screen.blit(text1, text_rect1)
-    if num % 1 == 0 and num != 0:
-        pygame.draw.rect(screen, (255, 255, 255), (rect_pos, rect_size))
-        screen.blit(text4, text_rect4)
 
 
 def win():
     global i
+    button = Button(222, 70)
     n = []
-    font = pygame.font.SysFont('Arial', 50, True, False)
-    text = font.render('YOU WON!', True, (176, 42, 43))
-    text_rect = text.get_rect(center=((W_S // 2), (H_S // 2)))
     if block_list == n:
         i = 0
         i -= 1
-        screen.blit(text, text_rect)
+        print_text('YOU WON!', (W_S // 2), (H_S // 2), 50)
+        button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Play again', again)
+        pygame.mouse.set_visible(True)
 
 
 '____________________________ MAIN ____________________________'
@@ -127,7 +156,7 @@ def win():
 pygame.display.set_caption('Cringe Арканоид')
 screen = pygame.display.set_mode((W_S, H_S))
 pygame.mouse.set_visible(False)
-FPS = 120
+FPS = 60
 clock = pygame.time.Clock()
 
 # установка кирпичей
@@ -140,6 +169,7 @@ color_list = [(randrange(30, 256), randrange(
 while True:
     i += 1  # задержка
     run()
+    button = Button(220, 60)
     screen.blit(BG, bgs)
     # вывод кирпичей
     bricks = [pygame.draw.rect(screen, color_list[
@@ -152,3 +182,5 @@ while True:
     win()
     pygame.display.update()
     clock.tick(FPS)
+    pygame.display.set_caption(f'Ball   FPS: {int(clock.get_fps())}')
+    print(i)
