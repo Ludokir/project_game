@@ -13,6 +13,9 @@ speed_x = randint(5, 7)
 speed_y = speed_y_start = randint(-8, -6)
 block = 100
 
+rect_size = w, h = 222, 60
+rect_pos = ((W_S - w) // 2, ((H_S + h) // 2))
+
 BG = pygame.image.load('img/bg.jpg')
 bgs = BG.get_rect()
 
@@ -72,7 +75,7 @@ def move_and_stop():
 
 # основные установки
 def run():
-    global platform_rect, i, block
+    global platform_rect, i, block, rect_pos, rect_size
     for e in pygame.event.get():
         if e.type == pygame.QUIT or \
                 e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
@@ -93,12 +96,18 @@ def collide():
     font1 = pygame.font.SysFont('Arial', 30, True, False)
     text1 = font1.render(f'Points: {(num)}', True, (176, 42, 43))
     text_rect1 = text1.get_rect(center=((W_S - 70), (H_S - 100)))
+    font4 = pygame.font.SysFont('Arial', 50, True, False)
+    text4 = font4.render('Play again', True, (176, 42, 43))
+    text_rect4 = text4.get_rect(topleft=((W_S - w) // 2 + 10, ((H_S + h) // 2)))
     if hit_index != -1:
         hit_rect = block_list.pop(hit_index)
         hit_color = color_list.pop(hit_index)
         speed_y = -speed_y
         num += 1
     screen.blit(text1, text_rect1)
+    if num % 1 == 0 and num != 0:
+        pygame.draw.rect(screen, (255, 255, 255), (rect_pos, rect_size))
+        screen.blit(text4, text_rect4)
 
 
 def win():
@@ -124,9 +133,9 @@ clock = pygame.time.Clock()
 # установка кирпичей
 brick = pygame.image.load('img/brick0.png')
 block_list = [pygame.Rect(
-    10 + 120 * i, 10 + 70 * j, 100, 50) for i in range(10) for j in range(4)]
+    10 + 120 * i, 10 + 70 * j, 100, 50) for i in range(1) for j in range(1)]
 color_list = [(randrange(30, 256), randrange(
-    30, 256), randrange(30, 256)) for i in range(10) for j in range(4)]
+    30, 256), randrange(30, 256)) for i in range(1) for j in range(1)]
 
 while True:
     i += 1  # задержка
