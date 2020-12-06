@@ -203,4 +203,3 @@ while True:
     win()
     pygame.display.update()
     clock.tick(FPS)
-    
