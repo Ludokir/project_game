@@ -12,9 +12,10 @@ W_S, H_S = 1200, 800
 lives = 3
 num = 0
 i = 0
-speed_x = randint(6, 8)
-speed_y = speed_y_start = randint(-8, -6)
+speed_x = speed_x_start = randint(15, 17)
+speed_y = speed_y_start = randint(15, 17)
 block = 100
+b = False
 
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
@@ -43,8 +44,22 @@ def print_text(message, x, y, size):
     screen.blit(text, text_rect)
 
 
-def again():
-    return
+def start():
+    global b, i, block_list, color_list, lives, num, speed_x, speed_y
+    b = True
+    if lives == 0:
+        num = 0
+        speed_x = speed_x_start
+        speed_y = speed_y_start
+        lives = 3
+    else:
+        speed_y = speed_y * 1.5
+        speed_x = speed_x * 1.5
+    block_list = [pygame.Rect(
+        10 + 120 * i, 10 + 70 * j, 100, 50) for i in range(
+            10) for j in range(4)]
+    color_list = [(randrange(30, 256), randrange(
+        30, 256), randrange(30, 256)) for i in range(10) for j in range(4)]
 
 
 class Button():
@@ -100,18 +115,18 @@ def move_and_stop():
     if ball_rect.right >= W_S or ball_rect.left <= 0:
         speed_x = -speed_x
     if ball_rect.colliderect(platform_rect):
-        speed_x = -speed_x
         speed_y = -speed_y
+        speed_x = -speed_x
     if ball_rect.colliderect(platform_rect) and \
-            ball_rect.bottom <= (platform_rect.bottom - 36):
+            ball_rect.bottom <= (platform_rect.bottom - 10):
         speed_x = -speed_x
     if ball_rect.bottom >= H_S:
         i = 0
         lives -= 1
-    if lives <= 0:
+    if lives == 0 and not b:
         i = 0
         print_text('GAME OVER!', (W_S // 2), (H_S // 2), 50)
-        button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Play again', again)
+        button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Play again', start)
         pygame.mouse.set_visible(True)
 
 
@@ -145,14 +160,14 @@ def collide():
 
 
 def win():
-    global i
+    global i, b
     button = Button(222, 70)
     n = []
-    if block_list == n:
+    if block_list == n and not b:
         i = 0
         i -= 1
         print_text('YOU WON!', (W_S // 2), (H_S // 2), 50)
-        button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Play again', again)
+        button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Сontinue?', start)
         pygame.mouse.set_visible(True)
 
 
@@ -173,6 +188,8 @@ color_list = [(randrange(30, 256), randrange(
 
 while True:
     i += 1  # задержка
+    if i == 101:
+        b = False
     run()
     screen.blit(BG, bgs)
     # вывод кирпичей
@@ -187,3 +204,4 @@ while True:
     pygame.display.update()
     clock.tick(FPS)
     pygame.display.set_caption(f'Cringe Арканоид{int(clock.get_fps())}')
+    print(i, b)
