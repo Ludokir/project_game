@@ -180,7 +180,6 @@ FPS = 60
 clock = pygame.time.Clock()
 
 # установка кирпичей
-brick = pygame.image.load('img/brick0.png')
 block_list = [pygame.Rect(
     10 + 120 * i, 10 + 70 * j, 100, 50) for i in range(10) for j in range(4)]
 color_list = [(randrange(30, 256), randrange(
