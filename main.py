@@ -37,8 +37,7 @@ def init():
         platform_rect.top = H_S - 50
 
 
-# движение шара
-def move():
+def move_and_stop():
     global ball_rect, i, speed_x, speed_y
     global speed_y_start, block, platform_rect, lives
     font2 = pygame.font.SysFont('Arial', 30, True, False)
@@ -46,7 +45,7 @@ def move():
     text_rect2 = text2.get_rect(center=((W_S - 70), (H_S - 65)))
 
     font3 = pygame.font.SysFont('Arial', 50, True, False)
-    text3 = font3.render('YOU LOSE!', True, (176, 42, 43))
+    text3 = font3.render('GAME OVER!', True, (176, 42, 43))
     text_rect3 = text3.get_rect(center=((W_S // 2), (H_S // 2)))
     if i <= block:
         ball_rect = ball_rect
@@ -138,7 +137,7 @@ while True:
         color], block) for color, block in enumerate(block_list)]
     screen.blit(ball, ball_rect)
     screen.blit(platform, platform_rect)
-    move()
+    move_and_stop()
     collide()
     init()
     win()
