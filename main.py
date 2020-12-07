@@ -16,6 +16,8 @@ speed_x = speed_x_start = randint(15, 17)
 speed_y = speed_y_start = randint(15, 17)
 block = 100
 b = False
+block_menu = True
+stop = False
 
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
@@ -44,6 +46,16 @@ def print_text(message, x, y, size):
     screen.blit(text, text_rect)
 
 
+def delay():
+    global i, b, block_menu, stop
+    stop = True
+    block_menu = False
+
+
+def qui():
+    sys.exit(0)
+
+
 def start():
     global b, i, block_list, color_list, lives, num, speed_x, speed_y
     b = True
@@ -60,6 +72,21 @@ def start():
             10) for j in range(4)]
     color_list = [(randrange(30, 256), randrange(
         30, 256), randrange(30, 256)) for i in range(10) for j in range(4)]
+
+
+def menu():
+    global i, block_menu, stop, b
+    button = Button(220, 70)
+    if block_menu:
+        button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Start game', delay)
+        button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
+        pygame.mouse.set_visible(True)
+    else:
+        pygame.mouse.set_visible(False)
+    if stop:
+        i += 1
+    if i == 101:
+        b = False
 
 
 class Button():
@@ -86,7 +113,7 @@ class Button():
 
         font = pygame.font.SysFont('Arial', 50, True, False)
         text = font.render(text, True, (0, 0, 0))
-        text_rect = text.get_rect(topleft=(x + 10, y + 6))
+        text_rect = text.get_rect(center=(x + w // 2, y + h // 2))
         screen.blit(text, text_rect)
 
 
@@ -102,7 +129,7 @@ def init():
 
 
 def move_and_stop():
-    global ball_rect, i, speed_x, speed_y, BLACK
+    global ball_rect, i, speed_x, speed_y, BLACK, stop
     global speed_y_start, block, platform_rect, lives
     button = Button(220, 70)
     print_text(f'Lives: {(lives)}', (W_S - 70), (H_S - 65), 30)
@@ -110,7 +137,7 @@ def move_and_stop():
         ball_rect = ball_rect
     else:
         ball_rect = ball_rect.move(speed_x, speed_y)
-    if ball_rect.top <= 0:
+    if ball_rect.top <= 3:
         speed_y = -speed_y
     if ball_rect.right >= W_S or ball_rect.left <= 0:
         speed_x = -speed_x
@@ -127,6 +154,7 @@ def move_and_stop():
         i = 0
         print_text('GAME OVER!', (W_S // 2), (H_S // 2), 50)
         button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Play again', start)
+        button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
         pygame.mouse.set_visible(True)
 
 
@@ -168,6 +196,7 @@ def win():
         i -= 1
         print_text('YOU WON!', (W_S // 2), (H_S // 2), 50)
         button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Сontinue?', start)
+        button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
         pygame.mouse.set_visible(True)
 
 
@@ -186,14 +215,12 @@ color_list = [(randrange(30, 256), randrange(
     30, 256), randrange(30, 256)) for i in range(10) for j in range(4)]
 
 while True:
-    i += 1  # задержка
-    if i == 101:
-        b = False
     run()
     screen.blit(BG, bgs)
     # вывод кирпичей
     bricks = [pygame.draw.rect(screen, color_list[
         color], block) for color, block in enumerate(block_list)]
+    menu()
     screen.blit(ball, ball_rect)
     screen.blit(platform, platform_rect)
     move_and_stop()
@@ -202,3 +229,4 @@ while True:
     win()
     pygame.display.update()
     clock.tick(FPS)
+    print(i, b)
