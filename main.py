@@ -47,7 +47,7 @@ def print_text(message, x, y, size):
 
 
 def delay():
-    global i, b, block_menu, stop
+    global block_menu, stop
     stop = True
     block_menu = False
 
