@@ -80,9 +80,6 @@ def menu():
     if block_menu:
         button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Start game', delay)
         button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
-        pygame.mouse.set_visible(True)
-    else:
-        pygame.mouse.set_visible(False)
     if stop:
         i += 1
     if i == 101:
@@ -137,7 +134,7 @@ def move_and_stop():
         ball_rect = ball_rect
     else:
         ball_rect = ball_rect.move(speed_x, speed_y)
-    if ball_rect.top <= 3:
+    if ball_rect.top <= 5:
         speed_y = -speed_y
     if ball_rect.right >= W_S or ball_rect.left <= 0:
         speed_x = -speed_x
@@ -153,9 +150,9 @@ def move_and_stop():
     if lives == 0 and not b:
         i = 0
         print_text('GAME OVER!', (W_S // 2), (H_S // 2), 50)
+        print_text(f'You score: {num}', (W_S // 2), ((H_S + 430) // 2), 50)
         button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Play again', start)
         button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
-        pygame.mouse.set_visible(True)
 
 
 # основные установки
@@ -195,16 +192,16 @@ def win():
         i = 0
         i -= 1
         print_text('YOU WON!', (W_S // 2), (H_S // 2), 50)
+        print_text(f'You score: {num}', (W_S // 2), ((H_S + 430) // 2), 50)
         button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Сontinue?', start)
         button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
-        pygame.mouse.set_visible(True)
 
 
 '____________________________ MAIN ____________________________'
 
-pygame.display.set_caption('Cringe Арканоид')
+pygame.display.set_icon(pygame.image.load('ball.ico'))
+pygame.display.set_caption('Арканоид')
 screen = pygame.display.set_mode((W_S, H_S))
-pygame.mouse.set_visible(False)
 FPS = 60
 clock = pygame.time.Clock()
 
@@ -229,4 +226,4 @@ while True:
     win()
     pygame.display.update()
     clock.tick(FPS)
-    print(i, b)
+    print(i, b, block_menu)
