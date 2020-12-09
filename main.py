@@ -18,6 +18,8 @@ block = 100
 b = False
 block_menu = True
 stop = False
+collide1 = False
+n = []
 
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
@@ -74,18 +76,6 @@ def start():
         30, 256), randrange(30, 256)) for i in range(10) for j in range(4)]
 
 
-def menu():
-    global i, block_menu, stop, b
-    button = Button(220, 70)
-    if block_menu:
-        button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Start game', delay)
-        button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
-    if stop:
-        i += 1
-    if i == 101:
-        b = False
-
-
 class Button():
     def __init__(self, w, h):
         self.w = w
@@ -108,27 +98,51 @@ class Button():
             pygame.draw.rect(
                 screen, self.inactive_color, (x, y, self.w, self.h))
 
-        font = pygame.font.SysFont('Arial', 50, True, False)
+        font = pygame.font.SysFont('Arial', 40, True, False)
         text = font.render(text, True, (0, 0, 0))
         text_rect = text.get_rect(center=(x + w // 2, y + h // 2))
         screen.blit(text, text_rect)
 
 
-# начальные установки для платформы и шара
-def init():
-    global i, ball_rect, platform_rect
-    if i == 0:
-        ball_rect = ball_rect_start = ball.get_rect(
-            center=((W_S // 2), (H_S - 51 - (ball_rect.h // 2))))
-        platform_rect = platform_rect_start = platform.get_rect(
-            center=((W_S // 2), (H_S - 50)))
-        platform_rect.top = H_S - 50
+'____________________________ MAIN ____________________________'
 
+button = Button(220, 70)
 
-def move_and_stop():
-    global ball_rect, i, speed_x, speed_y, BLACK, stop
-    global speed_y_start, block, platform_rect, lives
-    button = Button(220, 70)
+pygame.display.set_icon(pygame.image.load('ball.ico'))
+pygame.display.set_caption('Арканоид')
+screen = pygame.display.set_mode((W_S, H_S))
+FPS = 60
+clock = pygame.time.Clock()
+
+block_list = [pygame.Rect(
+    10 + 120 * i, 10 + 70 * j, 100, 50) for i in range(10) for j in range(4)]
+color_list = [(randrange(30, 256), randrange(
+    30, 256), randrange(30, 256)) for i in range(10) for j in range(4)]
+
+while True:
+    for e in pygame.event.get():
+        if e.type == pygame.QUIT or \
+                e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
+            sys.exit(0)
+        elif e.type == pygame.MOUSEMOTION and i >= block:
+            platform_rect.center = e.pos
+            platform_rect.top = H_S - 50
+            if platform_rect.right >= W_S:
+                platform_rect.right = W_S
+            if platform_rect.left <= 0:
+                platform_rect.left = 0
+    screen.blit(BG, bgs)
+    bricks = [pygame.draw.rect(screen, color_list[
+        color], block) for color, block in enumerate(block_list)]
+    if block_menu:
+        button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Start game', delay)
+        button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
+    if stop:
+        i += 1
+    if i == 101:
+        b = False
+    screen.blit(ball, ball_rect)
+    screen.blit(platform, platform_rect)
     print_text(f'Lives: {(lives)}', (W_S - 70), (H_S - 65), 30)
     if i <= block:
         ball_rect = ball_rect
@@ -153,28 +167,6 @@ def move_and_stop():
         print_text(f'You score: {num}', (W_S // 2), ((H_S + 430) // 2), 50)
         button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Play again', start)
         button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
-
-
-# основные установки
-def run():
-    global platform_rect, i, block, rect_pos, rect_size
-    for e in pygame.event.get():
-        if e.type == pygame.QUIT or \
-                e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-            sys.exit(0)
-        elif e.type == pygame.MOUSEMOTION and i >= block:
-            platform_rect.center = e.pos
-            platform_rect.top = H_S - 50
-            if platform_rect.right >= W_S:
-                platform_rect.right = W_S
-            if platform_rect.left <= 0:
-                platform_rect.left = 0
-
-
-# столкновение шара и кирпичей
-def collide():
-    global speed_y, ball_rect, num, rect1, BLUE, WHITE, BLACK
-    collide1 = False
     hit_index = ball_rect.collidelist(block_list)
     print_text(f'Points: {(num)}', (W_S - 70), (H_S - 100), 30)
     if hit_index != -1:
@@ -182,12 +174,12 @@ def collide():
         hit_color = color_list.pop(hit_index)
         speed_y = -speed_y
         num += 1
-
-
-def win():
-    global i, b
-    button = Button(222, 70)
-    n = []
+    if i == 0:
+        ball_rect = ball_rect_start = ball.get_rect(
+            center=((W_S // 2), (H_S - 51 - (ball_rect.h // 2))))
+        platform_rect = platform_rect_start = platform.get_rect(
+            center=((W_S // 2), (H_S - 50)))
+        platform_rect.top = H_S - 50
     if block_list == n and not b:
         i = 0
         i -= 1
@@ -195,35 +187,5 @@ def win():
         print_text(f'You score: {num}', (W_S // 2), ((H_S + 430) // 2), 50)
         button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Сontinue?', start)
         button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
-
-
-'____________________________ MAIN ____________________________'
-
-pygame.display.set_icon(pygame.image.load('ball.ico'))
-pygame.display.set_caption('Арканоид')
-screen = pygame.display.set_mode((W_S, H_S))
-FPS = 60
-clock = pygame.time.Clock()
-
-# установка кирпичей
-block_list = [pygame.Rect(
-    10 + 120 * i, 10 + 70 * j, 100, 50) for i in range(10) for j in range(4)]
-color_list = [(randrange(30, 256), randrange(
-    30, 256), randrange(30, 256)) for i in range(10) for j in range(4)]
-
-while True:
-    run()
-    screen.blit(BG, bgs)
-    # вывод кирпичей
-    bricks = [pygame.draw.rect(screen, color_list[
-        color], block) for color, block in enumerate(block_list)]
-    menu()
-    screen.blit(ball, ball_rect)
-    screen.blit(platform, platform_rect)
-    move_and_stop()
-    collide()
-    init()
-    win()
     pygame.display.update()
     clock.tick(FPS)
-    print(i, b, block_menu)
