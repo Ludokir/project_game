@@ -12,14 +12,16 @@ W_S, H_S = 1200, 800
 lives = 3
 num = 0
 i = 0
-speed_x = speed_x_start = randint(15, 17)
-speed_y = speed_y_start = randint(15, 17)
 block = 100
+
 b = False
 block_menu = True
 stop = False
 collide1 = False
 n = []
+
+speed_x = speed_x_start = randint(13, 17)
+speed_y = speed_y_start = randint(15, 17)
 
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
@@ -54,7 +56,7 @@ def delay():
     block_menu = False
 
 
-def qui():
+def quit():
     sys.exit(0)
 
 
@@ -136,7 +138,7 @@ while True:
         color], block) for color, block in enumerate(block_list)]
     if block_menu:
         button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Start game', delay)
-        button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
+        button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', quit)
     if stop:
         i += 1
     if i == 101:
@@ -166,7 +168,7 @@ while True:
         print_text('GAME OVER!', (W_S // 2), (H_S // 2), 50)
         print_text(f'You score: {num}', (W_S // 2), ((H_S + 430) // 2), 50)
         button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Play again', start)
-        button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
+        button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', quit)
     hit_index = ball_rect.collidelist(block_list)
     print_text(f'Points: {(num)}', (W_S - 70), (H_S - 100), 30)
     if hit_index != -1:
@@ -186,6 +188,6 @@ while True:
         print_text('YOU WON!', (W_S // 2), (H_S // 2), 50)
         print_text(f'You score: {num}', (W_S // 2), ((H_S + 430) // 2), 50)
         button.blit((W_S - 220) // 2, ((H_S + 60) // 2), 'Сontinue?', start)
-        button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', qui)
+        button.blit((W_S - 220) // 2, ((H_S + 230) // 2), 'Quit', quit)
     pygame.display.update()
     clock.tick(FPS)
